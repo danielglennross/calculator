@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -11,16 +12,14 @@ type binary struct {
 	op          string
 }
 
-func main() {
-	printCalculation("1 + 2 * (3 + 4) - 5 * (6 * (7 + 8))")
+func (b *binary) String() string {
+	if b == nil {
+		return ""
+	}
+	return fmt.Sprintf("{%v %v %v}", b.left, b.op, b.right)
 }
 
-func printCalculation(input string) {
-	res := calculate(input)
-	fmt.Printf("%v: value is: %v\n", input, res)
-}
-
-func calculate(input string) int {
+func Calculate(input string) int {
 	tokenMap, charIndex := map[string][]string{}, -1
 
 	chars := toChars(input)
@@ -122,6 +121,11 @@ func computeBinary(symbol string) func([]*binary) []*binary {
 	}
 
 	return func(ops []*binary) []*binary {
+		debug := debugOps(symbol, ops)
+
+		debug("input", "")
+
+		printIndex := 0
 		for i, b := range ops {
 			if isSingleBinaryRemaining(ops) {
 				break
@@ -135,9 +139,16 @@ func computeBinary(symbol string) func([]*binary) []*binary {
 
 			maybeSetPrevBinary(i, ops, res)
 			maybeSetNextBinary(i, ops, res)
+
+			debug(strconv.Itoa(printIndex), "")
+			printIndex++
 		}
 
-		return filterNils(ops)
+		ops = filterNils(ops)
+
+		debug("output", "\n")
+
+		return ops
 	}
 }
 
@@ -217,5 +228,18 @@ func tokenGenerator() func() string {
 			r++
 		}
 		return strings.Repeat(string(tokens[i]), r)
+	}
+}
+
+func debugOps(symbol string, ops []*binary) func(string, string) {
+	if debug := os.Getenv("DEBUG"); debug == "" || strings.ToLower(debug) == "false" {
+		return func(_, _ string) {}
+	}
+	return func(prefix, postfix string) {
+		fmt.Printf("\n %v %-6v [", symbol, prefix)
+		for _, b := range ops {
+			fmt.Print(b)
+		}
+		fmt.Printf("] %v", postfix)
 	}
 }

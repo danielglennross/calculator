@@ -2,14 +2,14 @@
 
 Code challenge
 
-An incorrect implementation of a calculator, where the following operators have ordered precedence:
+An incorrect implementation of a simple calculator, where the following operators are supported and have ordered precedence:
 ``` 
 *
 /
 +
 -
 ```
-(Although not BODMAS, this was more chalenging to solve!)
+(Although not BODMAS, this was more challenging to solve!)
 
 ```
 **************************************
@@ -72,7 +72,7 @@ Given:
 +
 [{1+6} {6+4} {4-30} {30+7}]
 [      {7+4} {4-30} {30+7}]
-[      {7+4} {4-37}       ]
+[            {11-30}{30+7}]
 [            {11-37}      ]
 
 -
